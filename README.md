@@ -244,7 +244,7 @@ Now let's try to deploy.
 1. Make sure **Apache Iceberg connector for AWS Glue** ready to use Apache Iceberg with AWS Glue jobs.
 2. Define a schema for the streaming data
    <pre>
-   (.venv) $ cdk deploy GlueStreamingCDCtoIcebergJobRole GlueTableSchemaOnKinesisStream
+   (.venv) $ cdk deploy GlueTableSchemaOnKinesisStream
    </pre>
 
    Running `cdk deploy GlueTableSchemaOnKinesisStream` command is like that we create a schema manually using the AWS Glue Data Catalog as the following steps:
@@ -289,7 +289,9 @@ Now let's try to deploy.
    * (step 2) Provision the Glue Streaming Job
 
      <pre>
-     (.venv) $ cdk deploy GlueStreamingCDCtoIceberg
+     (.venv) $ cdk deploy GlueStreamingCDCtoIcebergJobRole \
+                          GrantLFPermissionsOnGlueJobRole \
+                          GlueStreamingCDCtoIceberg
      </pre>
 5. Make sure the glue job to access the Kinesis Data Streams table in the Glue Catalog database, otherwise grant the glue job to permissions
 
@@ -514,6 +516,27 @@ Enjoy!
  * (9) [Implement a CDC-based UPSERT in a data lake using Apache Iceberg and AWS Glue (2022-06-15)](https://aws.amazon.com/ko/blogs/big-data/implement-a-cdc-based-upsert-in-a-data-lake-using-apache-iceberg-and-aws-glue/)
  * (10) [Apache Iceberg - Spark Writes with SQL (v0.14.0)](https://iceberg.apache.org/docs/0.14.0/spark-writes/)
  * (11) [Crafting serverless streaming ETL jobs with AWS Glue (2020-10-14)](https://aws.amazon.com/ko/blogs/big-data/crafting-serverless-streaming-etl-jobs-with-aws-glue/)
+
+## Troubleshooting
+
+ * Granting database or table permissions error using AWS CDK
+   * Error message:
+     <pre>
+     AWS::LakeFormation::PrincipalPermissions | CfnPrincipalPermissions Resource handler returned message: "Resource does not exist or requester is not authorized to access requested permissions. (Service: LakeFormation, Status Code: 400, Request ID: f4d5e58b-29b6-4889-9666-7e38420c9035)" (RequestToken: 4a4bb1d6-b051-032f-dd12-5951d7b4d2a9, HandlerErrorCode: AccessDenied)
+     </pre>
+   * Solution:
+
+     The role assumed by cdk is not a data lake administrator. (e.g., `cdk-hnb659fds-deploy-role-12345678912-us-east-1`) <br/>
+     So, deploying PrincipalPermissions meets the error such as:
+
+     `Resource does not exist or requester is not authorized to access requested permissions.`
+
+     In order to solve the error, it is necessary to promote the cdk execution role to the data lake administrator.<br/>
+     For example, https://github.com/aws-samples/data-lake-as-code/blob/mainline/lib/stacks/datalake-stack.ts#L68
+
+   * Reference:
+
+     [https://github.com/aws-samples/data-lake-as-code](https://github.com/aws-samples/data-lake-as-code) - Data Lake as Code
 
 ## Security
 
