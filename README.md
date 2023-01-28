@@ -345,6 +345,10 @@ Go to [Athena](https://console.aws.amazon.com/athena/home) on the AWS Management
    <pre>
    (.venv) $ aws lakeformation grant-permissions \
                  --principal DataLakePrincipalIdentifier=arn:aws:iam::<i>{account-id}</i>:user/<i>example-user-id</i> \
+                 --permissions CREATE_TABLE DESCRIBE ALTER DROP \
+                 --resource '{ "Database": { "Name": "<i>cdc_iceberg_demo_db</i>" } }'
+   (.venv) $ aws lakeformation grant-permissions \
+                 --principal DataLakePrincipalIdentifier=arn:aws:iam::<i>{account-id}</i>:user/<i>example-user-id</i> \
                  --permissions SELECT DESCRIBE ALTER INSERT DELETE DROP \
                  --resource '{ "Table": {"DatabaseName": "<i>cdc_iceberg_demo_db</i>", "TableWildcard": {}} }'
    </pre>
