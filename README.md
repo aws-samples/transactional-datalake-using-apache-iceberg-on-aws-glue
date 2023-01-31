@@ -1,7 +1,7 @@
 
 # Transactional Data Lake using Apache Iceberg with AWS Glue Streaming and DMS
 
-This repository provides you cdk scripts and sample code on how to implement end to end pipeline for transactional data lake by ingesting stream change data capture (CDC) from MySQL DB to Amazon S3 in Apache Iceberg format through Amazon Kinesis using Amazon Data Migration Service(DMS) and Glue Streaming.
+This repository provides you cdk scripts and sample code on how to implement end to end data pipeline for transactional data lake by ingesting stream change data capture (CDC) from MySQL DB to Amazon S3 in Apache Iceberg format through Amazon Kinesis using Amazon Data Migration Service(DMS) and Glue Streaming.
 
 ## Stream CDC into an Amazon S3 data lake in Apache Iceberg format with AWS Glue Streaming and DMS
 
