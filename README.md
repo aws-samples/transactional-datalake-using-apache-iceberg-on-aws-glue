@@ -73,8 +73,6 @@ For example:
     "--table_name": "retail_trans_iceberg",
     "--primary_key": "trans_id",
     "--kinesis_table_name": "cdc_retail_trans_stream",
-    "--kinesis_stream_name": "cdc_retail_trans_stream",
-    "--kinesis_stream_arn": "arn:aws:kinesis:us-east-1:123456789012:stream/cdc-retail-trans-stream",
     "--starting_position_of_kinesis_iterator": "LATEST",
     "--iceberg_s3_path": "s3://glue-iceberg-demo-us-east-1/cdc_iceberg_demo_db/retail_trans_iceberg",
     "--lock_table_name": "iceberg_lock",
@@ -242,7 +240,11 @@ Now let's try to deploy.
 
 ## Set up Glue Streaming Job
 1. Make sure **Apache Iceberg connector for AWS Glue** ready to use Apache Iceberg with AWS Glue jobs.
-2. Define a schema for the streaming data
+2. Create a S3 bucket for Apache Iceberg table
+   <pre>
+   (.venv) $ cdk deploy GlueStreamingCDCtoIcebergS3Path
+   </pre>   
+3. Define a schema for the streaming data
    <pre>
    (.venv) $ cdk deploy GlueTableSchemaOnKinesisStream
    </pre>
@@ -260,7 +262,7 @@ Now let's try to deploy.
    (9) For the classification, choose **JSON**.<br/>
    (10) Choose **Finish**
 
-3. Upload **AWS SDK for Java 2.x** jar file into S3
+4. Upload **AWS SDK for Java 2.x** jar file into S3
    <pre>
    (.venv) $ wget https://repo1.maven.org/maven2/software/amazon/awssdk/aws-sdk-java/2.17.224/aws-sdk-java-2.17.224.jar
    (.venv) $ aws s3 cp aws-sdk-java-2.17.224.jar s3://aws-glue-assets-123456789012-atq4q5u/extra-jars/aws-sdk-java-2.17.224.jar
@@ -276,7 +278,7 @@ Now let's try to deploy.
    --user-jars-first true
    </pre>
    In order to do this, we might need to upload **AWS SDK for Java 2.x** jar file into S3.
-4. Create Glue Streaming Job
+5. Create Glue Streaming Job
 
    * (step 1) Select one of Glue Job Scripts and upload into S3
      <pre>
@@ -293,7 +295,7 @@ Now let's try to deploy.
                           GrantLFPermissionsOnGlueJobRole \
                           GlueStreamingCDCtoIceberg
      </pre>
-5. Make sure the glue job to access the Kinesis Data Streams table in the Glue Catalog database, otherwise grant the glue job to permissions
+6. Make sure the glue job to access the Kinesis Data Streams table in the Glue Catalog database, otherwise grant the glue job to permissions
 
    Wec can get permissions by running the following command:
    <pre>
@@ -520,6 +522,7 @@ Enjoy!
  * (9) [Implement a CDC-based UPSERT in a data lake using Apache Iceberg and AWS Glue (2022-06-15)](https://aws.amazon.com/ko/blogs/big-data/implement-a-cdc-based-upsert-in-a-data-lake-using-apache-iceberg-and-aws-glue/)
  * (10) [Apache Iceberg - Spark Writes with SQL (v0.14.0)](https://iceberg.apache.org/docs/0.14.0/spark-writes/)
  * (11) [Crafting serverless streaming ETL jobs with AWS Glue (2020-10-14)](https://aws.amazon.com/ko/blogs/big-data/crafting-serverless-streaming-etl-jobs-with-aws-glue/)
+ * (12) [AWS Glue Notebook Samples](https://github.com/aws-samples/aws-glue-samples/tree/master/examples/notebooks) - sample iPython notebook files which show you how to use open data dake formats; Apache Hudi, Delta Lake, and Apache Iceberg on AWS Glue Interactive Sessions and AWS Glue Studio Notebook.
 
 ## Troubleshooting
 
