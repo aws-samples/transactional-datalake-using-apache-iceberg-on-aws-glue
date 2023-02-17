@@ -233,7 +233,9 @@ Now let's try to deploy.
   </pre>
 
 ## Create AWS DMS Replication Task
-  For example, we already created the sample database (i.e., `testdb`) and table (i.e., `retail_trans`)
+  In the previous step we already we already created the sample database (i.e., `testdb`) and table (i.e., `retail_trans`)
+
+  Now let's create a migration task.
   <pre>
   (.venv) $ cdk deploy DMSTaskAuroraMysqlToKinesis
   </pre>
