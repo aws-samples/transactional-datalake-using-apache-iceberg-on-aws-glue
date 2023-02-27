@@ -548,7 +548,7 @@ Enjoy!
 
      [https://github.com/aws-samples/data-lake-as-code](https://github.com/aws-samples/data-lake-as-code) - Data Lake as Code
 
- * `dms-vpc-role` is not configured properly: When first trying to deploy a DMS instance to an account using `aws-dms.CfnReplicationInstance()` I get the following error:
+ * `dms-vpc-role` is not configured properly: When first trying to deploy a DMS instance to an account using `aws-dms.CfnReplicationInstance()` the following error might occur:
    * Error message:
      <pre>
      | CREATE_FAILED | AWS::DMS::ReplicationInstance  | 
