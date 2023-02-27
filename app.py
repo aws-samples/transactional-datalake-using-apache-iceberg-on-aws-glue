@@ -7,6 +7,7 @@ from cdk_stacks import (
   VpcStack,
   AuroraMysqlStack,
   KinesisDataStreamStack,
+  DmsIAMRolesStack,
   DMSAuroraMysqlToKinesisStack,
   GlueJobRoleStack,
   GlueStreamDataSchemaStack,
@@ -31,13 +32,16 @@ aurora_mysql_stack.add_dependency(vpc_stack)
 kds_stack = KinesisDataStreamStack(app, 'DMSTargetKinesisDataStream')
 kds_stack.add_dependency(aurora_mysql_stack)
 
+dms_iam_permissions = DmsIAMRolesStack(app, 'DMSRequiredIAMRolesStack')
+dms_iam_permissions.add_dependency(kds_stack)
+
 dms_stack = DMSAuroraMysqlToKinesisStack(app, 'DMSTaskAuroraMysqlToKinesis',
   vpc_stack.vpc,
   aurora_mysql_stack.sg_mysql_client,
   kds_stack.kinesis_stream.stream_arn,
   env=APP_ENV
 )
-dms_stack.add_dependency(kds_stack)
+dms_stack.add_dependency(dms_iam_permissions)
 
 s3_bucket = S3BucketStack(app, 'GlueStreamingCDCtoIcebergS3Path')
 s3_bucket.add_dependency(dms_stack)
