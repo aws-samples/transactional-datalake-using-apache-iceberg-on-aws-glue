@@ -56,7 +56,6 @@ Then you should set approperly the cdk context configuration file, `cdk.context.
 For example:
 <pre>
 {
-  "vpc_name": "default",
   "db_cluster_name": "dms-source-db",
   "db_secret_name": "dev/rds/admin",
   "dms_data_source": {
