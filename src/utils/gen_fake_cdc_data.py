@@ -84,7 +84,7 @@ def main():
 
       if res['ResponseMetadata']['HTTPStatusCode'] != 200:
         print(res, file=sys.stderr)
-    time.sleep(random.choices([0.01, 0.03, 0.05, 0.07, 0.1])[-1])
+      time.sleep(random.choices([0.01, 0.03, 0.05, 0.07, 0.1])[-1])
   print(f'[INFO] Total {cnt} records are processed', file=sys.stderr)
 
 
