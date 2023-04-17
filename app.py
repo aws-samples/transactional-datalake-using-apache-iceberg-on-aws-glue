@@ -13,7 +13,8 @@ from cdk_stacks import (
   GlueStreamDataSchemaStack,
   GlueStreamingJobStack,
   DataLakePermissionsStack,
-  S3BucketStack
+  S3BucketStack,
+  BastionHostEC2InstanceStack
 )
 
 APP_ENV = cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'),
@@ -28,6 +29,13 @@ aurora_mysql_stack = AuroraMysqlStack(app, 'AuroraMysqlAsDMSDataSource',
   env=APP_ENV
 )
 aurora_mysql_stack.add_dependency(vpc_stack)
+
+bastion_host = BastionHostEC2InstanceStack(app, 'AuroraMysqlBastionHost',
+  vpc_stack.vpc,
+  aurora_mysql_stack.sg_mysql_client,
+  env=APP_ENV
+)
+bastion_host.add_dependency(aurora_mysql_stack)
 
 kds_stack = KinesisDataStreamStack(app, 'DMSTargetKinesisDataStream')
 kds_stack.add_dependency(aurora_mysql_stack)

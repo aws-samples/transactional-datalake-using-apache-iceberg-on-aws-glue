@@ -128,10 +128,19 @@ Now let's try to deploy.
 
 <b><em>In order to set up the Aurora MySQL, you need to connect the Aurora MySQL cluster on either your local PC or a EC2 instance.</em></b>
 
-1. Connect to the Aurora cluster writer node.
+1. (Optional) Create an EC2 Instance
+
    <pre>
-    $ mysql -h<i>db-cluster-name</i>.cluster-<i>xxxxxxxxxxxx</i>.<i>region-name</i>.rds.amazonaws.com -uadmin -p
-    Enter password: 
+    (.venv) $ cdk deploy AuroraMysqlBastionHost
+   </pre>
+
+2. Connect to the Aurora cluster writer node.
+   <pre>
+    $ sudo pip install ec2instanceconnectcli
+    $ export BASTION_HOST_ID=$(aws cloudformation describe-stacks --stack-name <i>AuroraMysqlBastionHost</i> | jq -r '.Stacks[0].Outputs | .[] | select(.OutputKey | endswith("EC2InstanceId")) | .OutputValue')
+    $ mssh --region "<i>your-region-name (e.g., us-east-1)</i>" ec2-user@${BASTION_HOST_ID}
+    [ec2-user@ip-172-31-7-186 ~]$ mysql -h<i>db-cluster-name</i>.cluster-<i>xxxxxxxxxxxx</i>.<i>region-name</i>.rds.amazonaws.com -uadmin -p
+    Enter password:
     Welcome to the MariaDB monitor.  Commands end with ; or \g.
     Your MySQL connection id is 20
     Server version: 8.0.23 Source distribution
@@ -143,7 +152,17 @@ Now let's try to deploy.
     MySQL [(none)]>
    </pre>
 
-2. At SQL prompt run the below command to confirm that binary logging is enabled:
+   > :information_source: `AuroraMysqlBastionHost` is a CDK Stack to create the bastion host.
+
+   > :information_source: You can also connect to an EC2 instance using the EC2 Instance Connect CLI.
+   For more information, see [Connect using the EC2 Instance Connect CLI](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html#ec2-instance-connect-connecting-ec2-cli).
+   For example,
+       <pre>
+       $ sudo pip install ec2instanceconnectcli
+       $ mssh ec2-user@i-001234a4bf70dec41EXAMPLE # ec2-instance-id
+       </pre>
+
+3. At SQL prompt run the below command to confirm that binary logging is enabled:
    <pre>
     MySQL [(none)]> SHOW GLOBAL VARIABLES LIKE "log_bin";
     +---------------+-------+
@@ -154,7 +173,7 @@ Now let's try to deploy.
     1 row in set (0.00 sec)
    </pre>
 
-3. Also run this to AWS DMS has bin log access that is required for replication
+4. Also run this to AWS DMS has bin log access that is required for replication
    <pre>
     MySQL [(none)]> CALL mysql.rds_set_configuration('binlog retention hours', 24);
     Query OK, 0 rows affected (0.01 sec)
@@ -370,14 +389,16 @@ Go to [Athena](https://console.aws.amazon.com/athena/home) on the AWS Management
 
 3. Generate test data.
    <pre>
-   (.venv) $ pip install -r utils/requirements-dev.txt
-   (.venv) $ python utils/gen_fake_mysql_data.py \
-                   --database <i>your-database-name</i> \
-                   --table <i>your-table-name</i> \
-                   --user <i>user-name</i> \
-                   --password <i>password</i> \
-                   --host <i>db-cluster-name</i>.cluster-<i>xxxxxxxxxxxx</i>.<i>region-name</i>.rds.amazonaws.com \
-                   --max-count 10
+    $ export BASTION_HOST_ID=$(aws cloudformation describe-stacks --stack-name <i>AuroraMysqlBastionHost</i> | jq -r '.Stacks[0].Outputs | .[] | select(.OutputKey | endswith("EC2InstanceId")) | .OutputValue')
+    $ mssh --region "<i>your-region-name (e.g., us-east-1)</i>" ec2-user@${BASTION_HOST_ID}
+    [ec2-user@ip-172-31-7-186 ~]$ pip3 install -r utils/requirements-dev.txt
+    [ec2-user@ip-172-31-7-186 ~]$ python3 utils/gen_fake_mysql_data.py \
+                                    --database <i>your-database-name</i> \
+                                    --table <i>your-table-name</i> \
+                                    --user <i>user-name</i> \
+                                    --password <i>password</i> \
+                                    --host <i>db-cluster-name</i>.cluster-<i>xxxxxxxxxxxx</i>.<i>region-name</i>.rds.amazonaws.com \
+                                    --max-count 10
    </pre>
    In the Data Viewer in the Amazon Kinesis Management Console, you can see incomming records.
    ![amazon-kinesis-data-viewer](./assets/amazon-kinesis-data-viewer.png)
