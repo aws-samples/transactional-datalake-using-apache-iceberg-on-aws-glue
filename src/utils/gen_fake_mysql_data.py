@@ -34,7 +34,7 @@ DROP_TABLE_SQL_FMT = '''DROP TABLE IF NOT EXISTS {database}.{table};'''
 
 INSERT_SQL_FMT = '''INSERT INTO {database}.{table} (customer_id, event, sku, amount, device, trans_datetime) VALUES("{customer_id}", "{event}", "{sku}", {amount}, "{device}", "{trans_datetime}");'''
 
-DB_URL_FMT = 'mysql+pymysql://{user}:{password}@{host}'
+DB_URL_FMT = 'mysql+pymysql://{user}:{password}@{host}?autocommit=True'
 
 def main():
   parser = argparse.ArgumentParser()
