@@ -101,7 +101,6 @@ def processBatch(data_frame, batch_id):
         col('metadata.operation').alias('_op'),
         col('metadata.timestamp').alias('_op_timestamp'))
       cdc_df = cdc_df.withColumn('_op_timestamp', to_timestamp(col('_op_timestamp')))  
-      cdc_df.printSchema() # debug
 
       window = Window.partitionBy(PRIMARY_KEY).orderBy(desc("_op_timestamp"))
       deduped_cdc_df = cdc_df.withColumn("_row", row_number().over(window)) \
