@@ -49,9 +49,22 @@ command.
 
 ## Prerequisites
 
-Before synthesizing the CloudFormation, **you first set up Apache Iceberg connector for AWS Glue to use Apache Iceber with AWS Glue jobs.** (For more information, see [References](#references) (2))
+Before synthesizing the CloudFormation,
 
-Then you should set approperly the cdk context configuration file, `cdk.context.json`.
+-  **You set up Apache Iceberg connector for AWS Glue to use Apache Iceberg with AWS Glue jobs.** (For more information, see [References](#references) (2)). Then `glue_connections_name` of `cdk.context.json` configuration file should be set by Apache Iceberg connector name like this:
+   <pre>
+   { "glue_connections_name": "iceberg-connection" }
+   </pre>
+
+- **You create a S3 bucket for a glue job script and upload the glue job script file into the s3 bucket.** Then `glue_assets_s3_bucket_name` and `glue_job_script_file_name` of `cdk.context.json` configuration file should be set by the S3 bucket name and the glue job script file name like this:
+   <pre>
+   {
+      "glue_assets_s3_bucket_name": "aws-glue-assets-123456789012-us-east-1",
+      "glue_job_script_file_name": "spark_sql_merge_into_iceberg.py"
+   }
+   </pre>
+
+Then you set other remaining configurations of the cdk context configuration file `cdk.context.json` accordingly.
 
 For example:
 <pre>
@@ -88,9 +101,9 @@ For example:
 }
 </pre>
 
-:information_source: `--primary_key` option should be set by Iceberg table's primary column name. So, it is better to set the primary key of RDS table.
+:information_source: `--primary_key` of `glue_job_input_arguments` should be set by Iceberg table's primary column name. So, it is better to set the primary key of RDS table.
 
-:warning: **You should create a S3 bucket for a glue job script and upload the glue job script file into the s3 bucket.**
+:information_source: `--extra-jars` and `--user-jars-first` of `glue_job_input_arguments` is used in the 4th step of [Set up Glue Streaming Job](#set-up-glue-streaming-job).
 
 At this point you can now synthesize the CloudFormation template for this code.
 
@@ -239,7 +252,7 @@ Now let's try to deploy.
     +----------------+-------------+------+-----+-------------------+-------------------+
     7 rows in set (0.00 sec)
 
-    MySQL [testdb]>    
+    MySQL [testdb]>
    </pre>
 
 <b><em>After setting up the Aurora MySQL, you should come back to the terminal where you are deploying stacks.</em></b>
@@ -263,7 +276,7 @@ Now let's try to deploy.
 2. Create a S3 bucket for Apache Iceberg table
    <pre>
    (.venv) $ cdk deploy GlueStreamingCDCtoIcebergS3Path
-   </pre>   
+   </pre>
 3. Define a schema for the streaming data
    <pre>
    (.venv) $ cdk deploy GlueTableSchemaOnKinesisStream
@@ -472,7 +485,7 @@ Go to [Athena](https://console.aws.amazon.com/athena/home) on the AWS Management
 
    Insert some new records.
    <pre>
-    MySQL [testdb]> INSERT INTO retail_trans (customer_id, event, sku, amount, device) VALUES 
+    MySQL [testdb]> INSERT INTO retail_trans (customer_id, event, sku, amount, device) VALUES
     -> ("818177069814", "like", "JS6166YPTE", 1, "mobile"),
     -> ("387378799012", "list", "AI6161BEFX", 1, "pc"),
     -> ("839828949919", "purchase", "AC2306JBRJ", 5, "tablet"),
@@ -548,6 +561,7 @@ Enjoy!
  * (13) [Identity and access management for AWS Database Migration Service](https://docs.aws.amazon.com/dms/latest/userguide/security-iam.html#CHAP_Security.APIRole)
  * (14) [How AWS DMS handles open transactions when starting a full load and CDC task (2022-12-26)](https://aws.amazon.com/blogs/database/how-aws-dms-handles-open-transactions-when-starting-a-full-load-and-cdc-task/)
  * (15) [AWS DMS key troubleshooting metrics and performance enhancers (2023-02-10)](https://aws.amazon.com/blogs/database/aws-dms-key-troubleshooting-metrics-and-performance-enhancers/)
+ * (16) [Choosing an open table format for your transactional data lake on AWS (2023-06-09)](https://aws.amazon.com/blogs/big-data/choosing-an-open-table-format-for-your-transactional-data-lake-on-aws/)
 
 ## Troubleshooting
 
@@ -573,7 +587,7 @@ Enjoy!
  * `dms-vpc-role` is not configured properly: When first trying to deploy a DMS instance to an account using `aws-dms.CfnReplicationInstance()` the following error might occur:
    * Error message:
      <pre>
-     | CREATE_FAILED | AWS::DMS::ReplicationInstance  | 
+     | CREATE_FAILED | AWS::DMS::ReplicationInstance  |
      Instance The IAM Role arn:aws:iam::123412341234:role/dms-vpc-role is not configured properly. (Service: AWSDatabaseMigrationService; Status Code: 400; Error Code: AccessDeniedFault; Request ID: 39cbef67-2365-4f1e-89c9-e3704c35481b)
      </pre>
    * Solution:
