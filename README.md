@@ -563,6 +563,14 @@ Enjoy!
  * (15) [AWS DMS key troubleshooting metrics and performance enhancers (2023-02-10)](https://aws.amazon.com/blogs/database/aws-dms-key-troubleshooting-metrics-and-performance-enhancers/)
  * (16) [Choosing an open table format for your transactional data lake on AWS (2023-06-09)](https://aws.amazon.com/blogs/big-data/choosing-an-open-table-format-for-your-transactional-data-lake-on-aws/)
 
+## Related Works
+
+ * [transactional-datalake-using-amazon-msk-and-apache-iceberg-on-aws-glue](https://github.com/aws-samples/transactional-datalake-using-amazon-msk-and-apache-iceberg-on-aws-glue)
+   ![transactional-datalake-msk-arch](https://raw.githubusercontent.com/aws-samples/transactional-datalake-using-amazon-msk-and-apache-iceberg-on-aws-glue/main/transactional-datalake-arch.svg)
+ * [transactional-datalake-using-amazon-msk-serverless-and-apache-iceberg-on-aws-glue](https://github.com/aws-samples/transactional-datalake-using-amazon-msk-serverless-and-apache-iceberg-on-aws-glue)
+   ![transactional-datalake-msk-serverless-arch](https://raw.githubusercontent.com/aws-samples/transactional-datalake-using-amazon-msk-serverless-and-apache-iceberg-on-aws-glue/main/transactional-datalake-arch.svg)
+
+
 ## Troubleshooting
 
  * Granting database or table permissions error using AWS CDK
