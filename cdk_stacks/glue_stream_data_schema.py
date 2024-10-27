@@ -55,4 +55,6 @@ class GlueStreamDataSchemaStack(Stack):
     cfn_table.add_dependency(cfn_database)
     cfn_table.apply_removal_policy(cdk.RemovalPolicy.DESTROY)
 
-    cdk.CfnOutput(self, f'{self.stack_name}_GlueDatabaseName', value=cfn_table.database_name)
+    cdk.CfnOutput(self, 'GlueDatabaseName',
+      value=cfn_table.database_name,
+      export_name=f'{self.stack_name}-GlueDatabaseName')
